@@ -54,7 +54,7 @@ if [ -n "${!commandIdx}" ]; then
             printf "\n[ssh] [${targetNodes[i]}]\tDone\n\n"
         done
 
-    elif [ "${!commandIdx}" = "async-ssh" ]; then
+    elif [ "${!commandIdx}" = "ssh-async" ]; then
         for i in "${!targetNodes[@]}"; do
             {
                 ssh "root@${targetNodes[i]}" "${@:((commandIdx + 1))}"
