@@ -1,17 +1,16 @@
 #!/bin/bash
 printf "kubeinst-common begin\n"
 
-# deprecated-01
-# Already done in template
+# 01 - kernels and netbridge
 
-# sudo modprobe overlay
-# sudo modprobe br_netfilter
+sudo modprobe overlay
+sudo modprobe br_netfilter
 
-# echo "net.bridge.bridge-nf-call-iptables = 1" | sudo tee -a /etc/sysctl.d/99-kubernetes-cri.conf
-# echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.d/99-kubernetes-cri.conf
-# echo "net.bridge.bridge-nf-call-ip6tables = 1" | sudo tee -a /etc/sysctl.d/99-kubernetes-cri.conf
+echo "net.bridge.bridge-nf-call-iptables = 1" | sudo tee -a /etc/sysctl.d/99-kubernetes-cri.conf
+echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.d/99-kubernetes-cri.conf
+echo "net.bridge.bridge-nf-call-ip6tables = 1" | sudo tee -a /etc/sysctl.d/99-kubernetes-cri.conf
 
-# sudo sysctl --system
+sudo sysctl --system
 
 # deprecated-02
 # Already done in template
@@ -24,7 +23,7 @@ printf "kubeinst-common begin\n"
 # echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 # sudo apt-get update
 
-# 01 - Prepare CRI-O
+# 02 - Prepare CRI-O
 
 export OS=xUbuntu_22.04
 export VERSION=1.24
@@ -43,7 +42,7 @@ curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/
 # apt update
 # apt-get install cri-o cri-o-runc
 
-# 02 - Update and install
+# 03 - Update and install
 
 # apt-get install cri-o cri-o-runc podman buildah --no-install-recommends -y
 export K8S_VERSION=1.24.7-00
