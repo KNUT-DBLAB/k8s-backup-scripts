@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-nginx
+  labels:
+    app: test-nginx
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: test-nginx
+  template:
+    metadata:
+      labels:
+        app: test-nginx
+    spec:
+      containers:
+        - name: test-nginx
+          image: docker.io/nginx:1.23.1-alpine
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 100m
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-nginx
+  labels:
+    app: test-nginx
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: test-nginx
+  type: ClusterIP
