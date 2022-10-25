@@ -66,7 +66,7 @@ if [ -n "${!commandIdx}" ]; then
     elif [ "${!commandIdx}" = "deploy-scripts" ]; then
         for i in "${!targetNodes[@]}"; do
             {
-                rsync -rltvuA --delete "/home/oys/k8s-test/node-scripts" "root@${targetNodes[i]}:/root"
+                rsync -rltvuA --delete "/home/oys/k8s-backup-scripts/node-scripts" "root@${targetNodes[i]}:/root"
             }
             # printf "[deploy-scripts] [ALL]\tDone\n\n"
         done
@@ -178,7 +178,8 @@ if [ -n "${!commandIdx}" ]; then
 
         printf "[DONE]\trevert\n\n"
     else
-        printf "Need help...?\n\n"
+        printf "Need help...?\n"
+        printf "Usage:\nbash remote.sh [node-option] COMMAND\n"
     fi
 
 else
