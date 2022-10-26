@@ -12,15 +12,14 @@ echo "net.bridge.bridge-nf-call-ip6tables = 1" | sudo tee -a /etc/sysctl.d/99-ku
 
 sudo sysctl --system
 
-# deprecated-02
-# Already done in template
+# 02 - gpg key for k8s
 
-# sudo apt-get update
-# sudo apt-get install -y apt-transport-https ca-certificates curl
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl
 
-# sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
 
-# echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 # sudo apt-get update
 
 # 02 - Prepare CRI-O
