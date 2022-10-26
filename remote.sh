@@ -67,6 +67,8 @@ if [ -n "${!commandIdx}" ]; then
         for i in "${!targetNodes[@]}"; do
             {
                 rsync -rltvuA --delete "/home/oys/k8s-backup-scripts/node-scripts" "root@${targetNodes[i]}:/root"
+                # rsync -rltvuA --delete "/home/oys/k8s-backup-scripts/node-scripts" "root@${targetNodes[i]}:/root"
+                scp "./registries.conf" "root@${targetNodes[i]}:/etc/containers/registries.conf"
             }
             # printf "[deploy-scripts] [ALL]\tDone\n\n"
         done
