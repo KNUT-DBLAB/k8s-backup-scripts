@@ -72,6 +72,7 @@ if [ -n "${!commandIdx}" ]; then
             }
             # printf "[deploy-scripts] [ALL]\tDone\n\n"
         done
+        sudo cp "./registries.conf" "/etc/containers/registries.conf"
         printf "\n[deploy-scripts] [ALL]\tDone\n\n"
     elif [ "${!commandIdx}" = "get-inotis" ]; then
         for i in "${!targetNodes[@]}"; do
