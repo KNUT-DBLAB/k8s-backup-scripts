@@ -59,19 +59,44 @@
     2. Turn off checkpoints
     3. Set static MAC addresses near CP's one
 9. Boot up a node, configure hostname and IP addresses **1 by 1** (to avoid hostname and IP conflict)
-    1. `sudo hostnamectl hostname k8s-01-cp`
-    2. `sudo vim /etc/netplan/00-network~.yaml`
+    1. Run below to change hostname
+
+        ```bash
+        sudo hostnamectl hostname k8s-01-cp
+        ```
+
+    3. Run below to change IP
+
+        ```bash
+        sudo vim /etc/netplan/00-network~.yaml
+        ```
+
         1. Change `172.20.0.200/24` to `172.20.0.10/24`
-    3. `sudo netplan apply`
-    4. `sudo reboot now`
+    1. Apply the config change
+
+        ```bash
+        sudo netplan apply
+        ```
+
+    3. Reboot
+
+        ```bash
+        sudo reboot now
+        ```
+
     5. Repeat for all nodes
 10. Make ssh-key from your host PC
-    1. In cmd or powershell, `ssh-keygen`
-    2. Just press enter, enter...
-    3. 2 files will be in `C:\Users\(yourname)\.ssh\`
+    1. In cmd or powershell,
+
+        ```powershell
+        ssh-keygen
+        ```
+
+    3. Just press enter, enter...
+    4. 2 files will be in `C:\Users\(yourname)\.ssh\`
         1. `id_rsa`: "Private" key of your host PC, you don't need to move this file
         2. `id_rsa.pub`: "Public" key of your host PC, copy this to remote nodes
-    4. Copy `id_rsa.pub` to all VMs, and append the data to VMs' `/home/pal/.ssh/authorized_keys`
+    5. Copy `id_rsa.pub` to all VMs, and append the data to VMs' `/home/pal/.ssh/authorized_keys`
 11. Make ssh-key from `dev-01`
     1. In 3 nodes,
         1. Make a password for `root` account
@@ -86,8 +111,13 @@
 1. Clone the kubespray repo from GitHub <https://github.com/kubernetes-sigs/kubespray>
 2. And get into the directory
 3. Install python3, python3-pip
-4. Run `pip install -U -r requirements.txt`
-5. (Follow this guide <https://kubespray.io/#/docs/getting-started>)
+4. Run pip install to get the packages it needs
+
+    ```bash
+    pip install -U -r requirements.txt
+    ```
+
+6. (Follow this guide <https://kubespray.io/#/docs/getting-started>)
     1. copy `inventory/sample` directory to `inventory/mycluster`
 
     2. Run below
@@ -96,20 +126,20 @@
          declare -a IPS=(172.20.0.10 172.20.0.11 172.10.0.12)
          ```
 
-    4. Run below
+    3. Run below
 
          ```bash
          CONFIG_FILE=inventory/mycluster/hosts.yml python3 contrib/inventory_builder/inventory.py ${IPS[@]}
          ```
   
           1. This makes `inventory/mycluster/hosts.yml` file
-    6. Edit `inventory/mycluster/hosts.yml` properly
-    7. Edit `inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml` file
+    4. Edit `inventory/mycluster/hosts.yml` properly
+    5. Edit `inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml` file
         1. Check version `kube_version`, maybe don't touch it to get latest version
         2. Set CNI `kube_network_plugin`, I recommend `flannel`
         3. Set CRI, `container_manager`, the `crio` is common nowadays
 
-6. Deploy the cluster! and kubespray will do the rest for you. But you should read the LFD459 book I gave you to know what kubespray do for you.
+7. Deploy the cluster! and kubespray will do the rest for you. But you should read the LFD459 book I gave you to know what kubespray do for you.
 
     ```bash
     ansible-playbook -i inventory/mycluster/hosts.yaml -u root --become --become-user=root cluster.yml
