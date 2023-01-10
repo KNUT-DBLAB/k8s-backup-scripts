@@ -2,7 +2,8 @@
 
 # Install CRI-O as CRI
 
-# Set k8s version
+# Set OS, k8s version
+export OS=xUbuntu_22.04
 export VERSION=1.26
 
 # Install libseccomp
