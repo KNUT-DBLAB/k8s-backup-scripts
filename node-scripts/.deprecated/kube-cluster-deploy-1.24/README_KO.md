@@ -14,7 +14,7 @@
 2. CIDR 10.244.0.0/16 대역과 겹치는 IP대역이 없어야 함 (_Flannel_ CNI가 이 대역을 사용해야 함)
 3. 모든 노드의 swap 메모리가 꺼져있어야 함
 
-### 설치 내용 정보
+### Installation info
 
 - CRI(Container Runtime Interface, 컨테이너 런타임 인터페이스)로써 _CRI-O_ 를 설치함, _docker_ 필요 없음!
   - 컨테이너 관리 도구 CLI로 _podman_ 설치를 추천함, `apt install podman` 으로 설치 가능
@@ -30,24 +30,30 @@
 
 #### 2. `all-02-cri.sh`
 
-- _CRI-O_ 설치
+- _CRI-O_ 설치를 준비
 - **OS 버전과 쿠버네티스 버전을 확인해야함**
-  - 현재 지원 최신버전 1.26
-  - 스크립트 파일의 6번째 줄을 아래와 같은 형식으로 수정
+  - 지원하는 OS 버전을 [이 링크에서 확인](https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/)
+  - 지원하는 쿠버네티스 버전을 [이 링크에서 확인](http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/)
+  - 스크립트 파일의 2, 3번째 줄을 아래와 같은 형식으로 수정
 
       ```bash
-      export VERSION=1.26
+      export OS=xUbuntu_22.04
+      export VERSION=1.24
       ```
 
-#### 3. `all-03-k8s-tools.sh`
+#### 3. `all-03-gpg.sh`
+
+- 쿠버네티스 CLI 도구들을 위해 gpg 키 설정
+
+#### 4. `all-04-tools.sh`
 
 - 쿠버네티스 CLI 도구들을 설치
 - **쿠버네티스 버전을 확인해야 함**
-  - 현재 최신 버전은 1.26.0-00
-  - 스크립트 파일의 6번째 줄을 아래와 같은 형식으로 수정
+  - 설치 가능한 `kubectl` 버전 확인, `apt-cache policy kubectl` 로 가능함... 찾아보고... 영어 읽어서 하도록...
+  - 스크립트 파일의 2번째 줄을 아래와 같은 형식으로 수정
 
       ```bash
-      export K8S_VERSION=1.26.0-00
+      export K8S_VERSION=1.24.7-00
       ```
 
 ### Control-Plane(컨트롤 플레인)에서만 실행

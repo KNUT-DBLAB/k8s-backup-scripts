@@ -1,4 +1,5 @@
 #!/bin/bash
+printf "kubeinst-common begin\n"
 
 # 01 - kernels and netbridge
 

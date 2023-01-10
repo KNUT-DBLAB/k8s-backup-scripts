@@ -26,22 +26,28 @@
 
 - Prepares _CRI-O_ installation
 - **YOU NEED TO CHECK OS VERSION AND K8S VERSION**
-  - Supported latest version now is `1.26`
-  - In the script file, edit line number 6 like below
+  - Refer supported version in [this link](https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/)
+  - Refer supported k8s version in [this link](http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/)
+  - In the script file, edit line number 2, 3 like below
 
       ```bash
-      export VERSION=1.26
+      export OS=xUbuntu_22.04
+      export VERSION=1.24
       ```
 
-#### 3. `all-03-k8s-tools.sh`
+#### 3. `all-03-gpg.sh`
+
+- Prepares gpg key for k8s CLI tools
+
+#### 4. `all-04-tools.sh`
 
 - Installs k8s CLI tools
 - **YOU NEED TO CHECK K8S VERSION**
-  - Latest version now is `1.26.0-00`
-  - In the script file, edit line number 6 like below
+  - Check the version for `kubectl` with `apt-cache policy kubectl`
+  - In the script file, edit line number 2 like below
 
       ```bash
-      export K8S_VERSION=1.26.0-00
+      export K8S_VERSION=1.24.7-00
       ```
 
 ### For Control-Plane only
