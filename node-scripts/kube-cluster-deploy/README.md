@@ -28,7 +28,7 @@
 - **YOU NEED TO CHECK OS VERSION AND K8S VERSION**
   - Refer supported version in [this link](https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/)
   - Refer supported k8s version in [this link](http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/)
-  - In the script file, edit line number 2, 3 like above
+  - In the script file, edit line number 2, 3 like below
 
       ```bash
       export OS=xUbuntu_22.04
@@ -43,11 +43,31 @@
 
 - Installs k8s CLI tools
 - **YOU NEED TO CHECK K8S VERSION**
+  - Check the version for `kubectl` with `apt-cache policy kubectl`
+  - In the script file, edit line number 2 like below
+
+      ```bash
+      export K8S_VERSION=1.24.7-00
+      ```
 
 ### For Control-Plane only
 
 #### 1. `cp-01-kubeadm-init.sh`
 
+- Starts initialize k8s cluster
+- It takes about 5 minutes...?
+- Look out for output. There will be scripts for...
+  - Adding user to access the cluster
+  - Join worker nodes to the cluster
+
 #### 2. `cp-02-kubeconfig.sh`
 
+- It's copy of script that adds user to access the cluster.
+
 #### 3. `cp-03-flannel.sh`
+
+- Applies _Flannel_ CNI to the cluster.
+
+## After running these scripts
+
+1. Join worker nodes with the script you got from initialize output.

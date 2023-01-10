@@ -1,0 +1,84 @@
+# 쿠버네티스 클러스터 배포 스크립트
+
+실행 순서는 아래와 같음
+
+1. 모든 노드에서 실행할 스크립트 실행
+2. Control-Plane(마스터)에서만 실행할 스크립트 실행
+3. 워커(슬레이브) 노드에서 클러스터로 Join 명령 실행
+
+## 시작하기 전에
+
+### 필요한 환경
+
+1. 모든 노드는 서로서로 IP로 접속할 수 있어야 함
+2. CIDR 10.244.0.0/16 대역과 겹치는 IP대역이 없어야 함 (_Flannel_ CNI가 이 대역을 사용해야 함)
+3. 모든 노드의 swap 메모리가 꺼져있어야 함
+
+### Installation info
+
+- CRI(Container Runtime Interface, 컨테이너 런타임 인터페이스)로써 _CRI-O_ 를 설치함, _docker_ 필요 없음!
+  - 컨테이너 관리 도구 CLI로 _podman_ 설치를 추천함, `apt install podman` 으로 설치 가능
+- CNI(Container Network Interface, 컨테이너 네트워크 인터페이스)로써 _Flannel_ 를 설치함
+
+## 단계별 설명
+
+### 모든 노드에서 실행할 스크립트
+
+#### 1. `all-01-kernel.sh`
+
+- 필요한 커널들을 활성화
+
+#### 2. `all-02-cri.sh`
+
+- _CRI-O_ 설치를 준비
+- **OS 버전과 쿠버네티스 버전을 확인해야함**
+  - 지원하는 OS 버전을 [이 링크에서 확인](https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/)
+  - 지원하는 쿠버네티스 버전을 [이 링크에서 확인](http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/)
+  - 스크립트 파일의 2, 3번째 줄을 아래와 같은 형식으로 수정
+
+      ```bash
+      export OS=xUbuntu_22.04
+      export VERSION=1.24
+      ```
+
+#### 3. `all-03-gpg.sh`
+
+- 쿠버네티스 CLI 도구들을 위해 gpg 키 설정
+
+#### 4. `all-04-tools.sh`
+
+- 쿠버네티스 CLI 도구들을 설치
+- **쿠버네티스 버전을 확인해야 함**
+  - 설치 가능한 `kubectl` 버전 확인, `apt-cache policy kubectl` 로 가능함... 찾아보고... 영어 읽어서 하도록...
+  - 스크립트 파일의 2번째 줄을 아래와 같은 형식으로 수정
+
+      ```bash
+      export K8S_VERSION=1.24.7-00
+      ```
+
+### Control-Plane(컨트롤 플레인)에서만 실행
+
+#### 1. `cp-01-kubeadm-init.sh`
+
+- 쿠버네티스 클러스터 초기화를 시작시킴
+- 아마도 5분 정도 소요
+- 실행된 후 화면에 출력을 잘 볼것. 아래 두 가지를 위한 스크립트가 표시될 것임
+  - 사용자가 클러스터에 접속할 수 있도록 만들어 주는 스크립트
+  - 워커 노드를 클러스터에 Join 시키는 스크립트, **토큰(비밀번호 개념)이 있기 때문에 잘 복사해둘 것**
+
+#### 2. `cp-02-kubeconfig.sh`
+
+- 사용자가 클러스터에 접속할 수 있도록 만들어 주는 스크립트
+
+#### 3. `cp-03-flannel.sh`
+
+- _Flannel_ CNI를 적용
+
+## 스크립트를 적용한 후에 할 것
+
+1. 워커 노드를 클러스터에 Join, 아까 클러스터 초기화 후에 얻은 스크립트를 활용하기
+
+---
+
+- 필요한 내용 있으면 오윤석에게 물어보기
+- 찾아보고 리눅스에 익숙해 져야 공부가 됨, 영어도 잘 읽도록...
