@@ -1,0 +1,100 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: private-registry-pv
+  namespace: private-registry
+  labels:
+    app: private-registry
+spec:
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  local:
+    path: /home/oys/private-registry
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - 01-k8s-worker02
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: private-registry-pvc
+  namespace: private-registry
+  labels:
+    app: private-registry
+spec:
+  resources:
+    requests:
+      storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: private-registry-svc
+  namespace: private-registry
+spec:
+  selector:
+    app: private-registry
+  type: NodePort
+  ports:
+    - port: 5000
+      targetPort: 5000
+      nodePort: 30500
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: private-registry
+  namespace: private-registry
+  labels:
+    app: private-registry
+spec:
+  selector:
+    matchLabels:
+      app: private-registry
+  template:
+    metadata:
+      labels:
+        app: private-registry
+    spec:
+      containers:
+        - name: private-registry
+          image: docker.io/registry:2.8.1
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: private-registry-certs
+              mountPath: "/certs"
+              readOnly: true
+            - name: private-registry-data
+              mountPath: /var/lib/registry
+              subPathExpr: $(POD_NAME)
+          env:
+            - name: REGISTRY_HTTP_TLS_CERTIFICATE
+              value: "/certs/tls.crt"
+            - name: REGISTRY_HTTP_TLS_KEY
+              value: "/certs/tls.key"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+      volumes:
+        - name: private-registry-certs
+          secret:
+            secretName: private-registry-cert
+        - name: private-registry-data
+          persistentVolumeClaim:
+            claimName: private-registry-pvc
