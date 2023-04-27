@@ -5,6 +5,7 @@ metadata:
   namespace: private-registry
   labels:
     app: private-registry
+    tier: backend
 spec:
   capacity:
     storage: 20Gi
@@ -29,6 +30,7 @@ metadata:
   namespace: private-registry
   labels:
     app: private-registry
+    tier: backend
 spec:
   resources:
     requests:
@@ -41,6 +43,9 @@ kind: Service
 metadata:
   name: private-registry-svc
   namespace: private-registry
+  labels:
+    app: private-registry
+    tier: backend
 spec:
   selector:
     app: private-registry
@@ -57,6 +62,7 @@ metadata:
   namespace: private-registry
   labels:
     app: private-registry
+    tier: backend
 spec:
   selector:
     matchLabels:
@@ -65,6 +71,7 @@ spec:
     metadata:
       labels:
         app: private-registry
+        tier: backend
     spec:
       containers:
         - name: private-registry
@@ -81,16 +88,18 @@ spec:
               readOnly: true
             - name: private-registry-data
               mountPath: /var/lib/registry
-              subPathExpr: $(POD_NAME)
+              # subPathExpr: $(POD_NAME)
           env:
             - name: REGISTRY_HTTP_TLS_CERTIFICATE
               value: "/certs/tls.crt"
             - name: REGISTRY_HTTP_TLS_KEY
               value: "/certs/tls.key"
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
+            # - name: POD_NAME
+            #   valueFrom:
+            #     fieldRef:
+            #       fieldPath: metadata.name
+            - name: REGISTRY_HTTP_HEADERS_Access-Control-Allow-Origin
+              value: "['*']"
       volumes:
         - name: private-registry-certs
           secret:
@@ -98,3 +107,95 @@ spec:
         - name: private-registry-data
           persistentVolumeClaim:
             claimName: private-registry-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: private-registry-ui-svc
+  namespace: private-registry
+  labels:
+    app: private-registry
+    tier: frontend
+spec:
+  selector:
+    app: private-registry-ui
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30501
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: private-registry-ui
+  namespace: private-registry
+  labels:
+    app: private-registry
+    tier: frontend
+spec:
+  selector:
+    matchLabels:
+      app: private-registry-ui
+  template:
+    metadata:
+      labels:
+        app: private-registry-ui
+    spec:
+      containers:
+        - name: private-registry-ui
+          image: docker.io/joxit/docker-registry-ui:2.3.3
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 80
+          env:
+            # - name: REGISTRY_URL
+            # The default url of your docker registry.
+            # You may need CORS configuration on your registry.
+            # This is usually the domain name or IP of your registry reachable by your computer
+            # (e.g http://registry.example.com). (default: derived from the hostname of your UI).
+            # value: "https://172.30.0.12:30500"
+            # - name: REGISTRY_TITLE
+            # Set a custom title for your user interface. (default: value derived from REGISTRY_URL).
+            # - name: PULL_URL
+            # Set a custom url when you copy the docker pull command. (default: value derived from REGISTRY_URL).
+            - name: DELETE_IMAGES
+              # Set if we can delete images from the UI. (default: false)
+              value: "true"
+            - name: SHOW_CONTENT_DIGEST
+              # Show content digest in docker tag list. (default: false)
+              value: "true"
+            # - name: CATALOG_ELEMENTS_LIMIT
+            # Limit the number of elements in the catalog page. (default: 100000).
+            # - name: SINGLE_REGISTRY
+            # Remove the menu that show the dialogs to add, remove and change the endpoint of your docker registry. (default: false).
+            - name: NGINX_PROXY_PASS_URL
+              # Update the default Nginx configuration and set the proxy_pass to your backend docker registry
+              # (this avoid CORS configuration).
+              # This is usually the name of your registry container in the form http://registry:5000.
+              value: "https://172.30.0.12:30500"
+            # - name: NGINX_PROXY_HEADER_
+            #: Update the default Nginx configuration and set custom headers for your backend docker registry. Only when NGINX_PROXY_PASS_URL is used.
+            # - name: NGINX_PROXY_PASS_HEADER_
+            #: Update the default Nginx configuration and forward custom headers to your backend docker registry. Only when NGINX_PROXY_PASS_URL is used.
+            # - name: NGINX_LISTEN_PORT
+            # Listen on a port other than 80. (default: 80 when the user is root, 8080 otherwise).
+            # - name: DEFAULT_REGISTRIES
+            # List of comma separated registry URLs (e.g http://registry.example.com,http://registry:5000), available only when SINGLE_REGISTRY=false. (default:  ).
+            # - name: READ_ONLY_REGISTRIES
+            # Desactivate dialog for remove and add new registries, available only when SINGLE_REGISTRY=false. (default: false).
+            # - name: SHOW_CATALOG_NB_TAGS
+            # Show number of tags per images on catalog page. This will produce + nb images requests, not recommended on large registries. (default: false).
+            # - name: HISTORY_CUSTOM_LABELS
+            # Expose custom labels in history page, custom labels will be processed like maintainer label.
+            # - name: USE_CONTROL_CACHE_HEADER
+            # Use Control-Cache header and set to no-store, no-cache.
+            # This will avoid some issues on multi-arch images (see #260).
+            # This option requires registry configuration: Access-Control-Allow-Headers with Cache-Control. (default: false).
+            # - name: THEME
+            # Chose your default theme, could be dark, light or auto. (default: auto). Since 2.4.0
+            # - name: THEME_
+            #: See table in Theme options section. Since 2.4.0
