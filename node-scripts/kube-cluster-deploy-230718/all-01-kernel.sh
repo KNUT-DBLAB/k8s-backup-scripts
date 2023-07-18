@@ -21,7 +21,9 @@ EOF
 # Apply sysctl params without reboot
 sudo sysctl --system
 
+echo "Verify that the br_netfilter, overlay modules are loaded"
 lsmod | grep br_netfilter
 lsmod | grep overlay
 
+echo "Verify that the net.bridge.bridge-nf-call-iptables, net.bridge.bridge-nf-call-ip6tables, and net.ipv4.ip_forward system variables are set to 1 in your sysctl config"
 sysctl net.bridge.bridge-nf-call-iptables net.bridge.bridge-nf-call-ip6tables net.ipv4.ip_forward
