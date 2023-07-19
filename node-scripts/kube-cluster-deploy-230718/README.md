@@ -65,3 +65,23 @@
 ## After running these scripts
 
 1. Join worker nodes with the script you got from initialize output.
+
+## When re-deploying after reset
+
+### Delete or edit residues
+
+Even after running `kubeadm reset`, some files will not deleted, especially kubelet config files.
+
+- `/etc/systemd/system/kubelet.service.d`
+- `/opt/cni/net.d`
+
+### Reinstalling tools (kubelet, CRI) will not generate config files
+
+When you deleted some config files, You need to manually create it.
+
+- kubelet
+  - `/etc/systemd/system/kubelet.service.d/10-kubelet.conf`
+  - Refer this link to get the default config: <https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/kubelet-integration/>
+- CRI
+  - `/etc/containers/policy.json`
+  - Refer this link to get the default config: <https://insights-core.readthedocs.io/en/latest/shared_parsers_catalog/containers_policy.html>

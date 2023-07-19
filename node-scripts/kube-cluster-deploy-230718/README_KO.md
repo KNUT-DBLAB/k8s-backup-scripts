@@ -78,3 +78,23 @@
 
 - 필요한 내용 있으면 오윤석에게 물어보기
 - 찾아보고 리눅스에 익숙해 져야 공부가 됨, 영어도 잘 읽도록...
+
+## 클러스터를 재배포(재설치) 할 때 주의할 점
+
+### 몇몇 파일은 수동으로 파일을 지우거나 수정해야 함
+
+`kubeadm reset` 을 실행시키더라도, 몇가지 파일은 삭제가 안됨, 특히 kubelet 설정 파일이 그대로 남아있음
+
+- `/etc/systemd/system/kubelet.service.d`
+- `/opt/cni/net.d`
+
+### 몇가지 툴 (kubelet, CRI) 은 재설치하더라도 설정파일을 생성하지 못함
+
+설정파일을 삭제한 뒤라면 몇몇 파일은 수동으로 작성해 주어야 함
+
+- kubelet
+  - `/etc/systemd/system/kubelet.service.d/10-kubelet.conf`
+  - Refer this link to get the default config: <https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/kubelet-integration/>
+- CRI
+  - `/etc/containers/policy.json`
+  - Refer this link to get the default config: <https://insights-core.readthedocs.io/en/latest/shared_parsers_catalog/containers_policy.html>
