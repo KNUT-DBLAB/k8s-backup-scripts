@@ -1,0 +1,16 @@
+/var/log/
+/vscode
+/.vscode
+/etc/passwd
+/etc/ld.so.cache
+/home/oys/bash-scripts/
+zsh_history
+bash_history
+/dev/pts/
+/dev/null
+/dev/tty
+/tmp/gitstatus
+/run/systemd/journal
+/run/sudo/ts/
+/run/udev/queue
+/tmp/
