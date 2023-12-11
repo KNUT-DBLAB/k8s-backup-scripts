@@ -1,14 +1,9 @@
 #!/bin/bash
 
-touch "/home/oys/grad-exp/inoti/inoti.csv"
-rm "/home/oys/grad-exp/inoti/inoti.csv"
-touch "/home/oys/grad-exp/inoti.csv"
-chmod ugo+rwx "/home/oys/grad-exp/inoti.csv"
-
 EXCLUDES_READ=""
 EXCLUDES=""
 
-readarray -t EXCLUDES_READ </home/oys/grad-exp/inoti-excludes.txt
+readarray -t EXCLUDES_READ </home/oys/grad-exp/inoti/inoti-excludes.txt
 
 for i in "${!EXCLUDES_READ[@]}"; do
     if [ -z "${EXCLUDES}" ]; then
@@ -21,5 +16,4 @@ done
 printf "\nExcludes = ${EXCLUDES}\n"
 
 sudo inotifywait / -rmq -e create,modify,move,delete,delete_self,unmount \
-    --format "%T,%:e,%w%f" --timefmt "%y%m%d-%H:%M:%S" -o "/home/oys/grad-exp/inoti.csv" --excludei "${EXCLUDES}"
-
+    --format "%T,%:e,%w%f" --timefmt "%y%m%d-%H:%M:%S" -o "/home/oys/grad-exp/inoti/inoti.csv" --excludei "${EXCLUDES}"
