@@ -3,7 +3,7 @@
 /.vscode
 /etc/passwd
 /etc/ld.so.cache
-/home/oys/bash-scripts/
+/home/oys/grad-exp/
 zsh_history
 bash_history
 /dev/pts/
